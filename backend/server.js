@@ -16,7 +16,7 @@ const io = new Server(httpServer, {
 });
 
 app.use(express.json());
-app.use(cors());
+app.use(cors({ origin: "http://localhost:5500", credentials: true }));
 
 io.use(async (socket, next) => {
   try {

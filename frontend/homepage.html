@@ -717,5 +717,47 @@
             });
         });
     </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const bookBtn = document.getElementById('book-btn');
+        
+            bookBtn.addEventListener('click', async function() {
+                const pickup = document.getElementById('pickup').value;
+                const dropoff = document.getElementById('dropoff').value;
+                
+                if (!pickup || !dropoff) {
+                    alert('Please enter both pickup and drop-off locations.');
+                    return;
+                }
+        
+                const rideData = {
+                    pickup,
+                    dropoff,
+                    userId: "USER_FIREBASE_UID"  // Replace with actual Firebase UID
+                };
+        
+                try {
+                    const response = await fetch("http://localhost:5000/api/rides/book", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Authorization": "Bearer YOUR_ID_TOKEN" // Replace with actual token
+                        },
+                        body: JSON.stringify(rideData)
+                    });
+        
+                    const data = await response.json();
+                    if (response.ok) {
+                        alert(`Ride booked successfully! Ride ID: ${data.rideId}`);
+                    } else {
+                        alert(`Error: ${data.message}`);
+                    }
+                } catch (error) {
+                    console.error("Error booking ride:", error);
+                    alert("Failed to book ride.");
+                }
+            });
+        });
+        </script>        
 </body>
 </html>

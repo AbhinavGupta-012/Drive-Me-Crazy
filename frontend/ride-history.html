@@ -103,5 +103,42 @@
             }
         });
     </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", async function() {
+            const rideList = document.getElementById("rideList");
+            const noHistory = document.getElementById("noHistory");
+        
+            try {
+                const response = await fetch("http://localhost:5000/api/rides/history", {
+                    method: "GET",
+                    headers: {
+                        "Authorization": "Bearer YOUR_ID_TOKEN"  // Replace with actual token
+                    }
+                });
+        
+                const rideHistory = await response.json();
+        
+                if (rideHistory.length > 0) {
+                    noHistory.style.display = "none";
+                    rideHistory.forEach(ride => {
+                        const li = document.createElement("li");
+                        li.classList.add("ride-card");
+                        li.innerHTML = `
+                            <img src="https://via.placeholder.com/120x80?text=Car" alt="Ride Image">
+                            <div class="ride-info">
+                                <strong>Date:</strong> ${ride.date} <br>
+                                <strong>Pickup:</strong> ${ride.pickup} <br>
+                                <strong>Dropoff:</strong> ${ride.dropoff} <br>
+                                <strong>Fare:</strong> ${ride.fare}
+                            </div>`;
+                        rideList.appendChild(li);
+                    });
+                }
+            } catch (error) {
+                console.error("Error fetching ride history:", error);
+                alert("Failed to load ride history.");
+            }
+        });
+        </script>
 </body>
 </html>

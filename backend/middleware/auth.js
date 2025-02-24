@@ -19,10 +19,5 @@ const verifyToken = async (req, res, next) => {
   }
 };
 
-app.use((req, res, next) => {
-    console.log("Incoming Token:", req.headers.authorization);
-    next();
-});
-
 
 module.exports = { verifyToken };
