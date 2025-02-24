@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ride History</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background-color: #e3f2fd;
+            color: #333;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #1565c0;
+        }
+        .ride-list {
+            list-style: none;
+        }
+        .ride-card {
+            display: flex;
+            align-items: center;
+            background: linear-gradient(135deg, #ffffff, #dfe6e9);
+            margin: 15px 0;
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transform: perspective(1000px) rotateX(5deg);
+        }
+        .ride-card:hover {
+            transform: perspective(1000px) rotateX(0deg) scale(1.05);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+        }
+        .ride-card img {
+            width: 120px;
+            height: 80px;
+            border-radius: 10px;
+            margin-right: 20px;
+        }
+        .ride-info {
+            flex: 1;
+            font-size: 1.1rem;
+            color: #2d3436;
+        }
+        .ride-info strong {
+            color: #1565c0;
+        }
+        .no-history {
+            text-align: center;
+            font-size: 1.2rem;
+            color: #777;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Ride History</h1>
+        <ul class="ride-list" id="rideList">
+            <p class="no-history" id="noHistory">No rides found.</p>
+        </ul>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const rideList = document.getElementById("rideList");
+            const noHistory = document.getElementById("noHistory");
+            
+            const rideHistory = [
+                { date: "2025-02-20", pickup: "Main Street", dropoff: "Central Park", fare: "$15", image: "https://via.placeholder.com/120x80?text=Car" },
+                { date: "2025-02-18", pickup: "Downtown", dropoff: "Airport", fare: "$25", image: "https://via.placeholder.com/120x80?text=Car" },
+                { date: "2025-02-15", pickup: "Mall", dropoff: "Train Station", fare: "$10", image: "https://via.placeholder.com/120x80?text=Car" }
+            ];
+            
+            if (rideHistory.length > 0) {
+                noHistory.style.display = "none";
+                rideHistory.forEach(ride => {
+                    const li = document.createElement("li");
+                    li.classList.add("ride-card");
+                    li.innerHTML = `<img src="${ride.image}" alt="Ride Image">
+                                    <div class="ride-info">
+                                        <strong>Date:</strong> ${ride.date} <br>
+                                        <strong>Pickup:</strong> ${ride.pickup} <br>
+                                        <strong>Dropoff:</strong> ${ride.dropoff} <br>
+                                        <strong>Fare:</strong> ${ride.fare}
+                                    </div>`;
+                    rideList.appendChild(li);
+                });
+            }
+        });
+    </script>
+</body>
+</html>
