@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Drive Me Crazy - But in a good way</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            color: #333;
+            line-height: 1.6;
+        }
+        header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 1rem 0;
+            position: fixed;
+            width: 100%;
+            z-index: 100;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+        
+        .logo span {
+            color: #3498db;
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+        
+        .nav-links li {
+            margin-left: 2rem;
+        }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        .nav-links a:hover {
+            color: #3498db;
+        }
+        
+        .auth-buttons a {
+            margin-left: 1rem;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .login-btn {
+            color: white;
+            border: 1px solid white;
+        }
+        
+        .signup-btn {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        .hero {
+            background: linear-gradient(rgba(53, 37, 174, 0.7), rgba(0,0,0,0.7)), url('/api/placeholder/1200/800') center/cover no-repeat;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            text-align: center;
+            color: white;
+            padding-top: 80px;
+        }
+        
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .booking-widget {
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        .booking-tabs {
+            display: flex;
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .booking-tab {
+            flex: 1;
+            padding: 1.2rem 0;
+            text-align: center;
+            cursor: pointer;
+            font-weight: 600;
+            color: #7f8c8d;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .booking-tab.active {
+            color: #3498db;
+        }
+        
+        .booking-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background-color: #3498db;
+        }
+        
+        .booking-tab i {
+            margin-right: 8px;
+            font-size: 1.1rem;
+        }
+        
+        .booking-content {
+            padding: 2rem;
+        }
+        
+        .booking-form h2 {
+            margin-bottom: 1.5rem;
+            color: #2c3e50;
+            text-align: center;
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+        
+        .input-icon-wrap {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+        
+        .input-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #7f8c8d;
+            font-size: 1.2rem;
+        }
+        
+        .icon-input {
+            width: 100%;
+            padding: 1rem 1rem 1rem 3rem;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        
+        .icon-input:focus {
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+            outline: none;
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-col {
+            flex: 1;
+        }
+        
+        .select-wrap {
+            position: relative;
+        }
+        
+        .select-wrap::after {
+            content: '▼';
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #7f8c8d;
+            font-size: 0.8rem;
+            pointer-events: none;
+        }
+        
+        .form-select {
+            width: 100%;
+            padding: 1rem;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            appearance: none;
+            font-size: 1rem;
+            color: #333;
+            background-color: white;
+        }
+        
+        .ride-type-options {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .ride-type-option {
+            flex: 1;
+            padding: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .ride-type-option.active {
+            border-color: #3498db;
+            background-color: rgba(52, 152, 219, 0.1);
+        }
+        
+        .ride-type-option img {
+            height: 40px;
+            margin-bottom: 0.5rem;
+        }
+        
+        .ride-type-option p {
+            font-weight: 500;
+            margin: 0;
+        }
+        
+        .btn {
+            display: inline-block;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            font-size: 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            width: 100%;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .btn:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+        }
+        
+        .features {
+            padding: 5rem 0;
+            background-color: #f9f9f9;
+        }
+        
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+            color: #2c3e50;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        
+        .feature-card {
+            background-color: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #3498db;
+            text-align: center;
+            padding-top: 1.5rem;
+        }
+        
+        .feature-content {
+            padding: 1.5rem;
+        }
+        
+        .feature-content h3 {
+            margin-bottom: 1rem;
+            color: #2c3e50;
+        }
+        
+        .testimonials {
+            padding: 5rem 0;
+        }
+        
+        .testimonial-slider {
+            max-width: 800px;
+            margin: 0 auto;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .testimonial-slide {
+            text-align: center;
+            padding: 0 2rem;
+            display: none;
+        }
+        
+        .testimonial-slide.active {
+            display: block;
+        }
+        
+        .testimonial-text {
+            font-style: italic;
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .testimonial-author {
+            font-weight: 700;
+            color: #2c3e50;
+        }
+        
+        .testimonial-nav {
+            text-align: center;
+            margin-top: 2rem;
+        }
+        
+        .testimonial-nav button {
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 2rem;
+            color: #3498db;
+            margin: 0 1rem;
+        }
+        
+        footer {
+            background-color: #2c3e50;
+            color: white;
+            padding: 3rem 0;
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+        }
+        
+        .footer-column h3 {
+            font-size: 1.3rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .footer-column ul {
+            list-style: none;
+        }
+        
+        .footer-column ul li {
+            margin-bottom: 0.8rem;
+        }
+        
+        .footer-column a {
+            color: #ddd;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+        
+        .footer-column a:hover {
+            color: #3498db;
+        }
+        
+        .footer-bottom {
+            margin-top: 3rem;
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .social-links {
+            margin-bottom: 1rem;
+        }
+        
+        .social-links a {
+            color: white;
+            font-size: 1.5rem;
+            margin: 0 0.5rem;
+        }
+        
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+            
+            .ride-type-options {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav>
+                <div class="logo">Drive<span>Me Crazy</span></div>
+                <ul class="nav-links">
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">About</a></li>
+                    <li><a href="#">Services</a></li>
+                    <li><a href="#">Safety</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+                <div class="auth-buttons">
+                    <a href="#" class="login-btn">Login</a>
+                    <a href="#" class="signup-btn">Sign Up</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <br><br><br>
+                <h1>Your Ride, Your Way</h1>
+                <p>Experience a seamless and secure transportation service with our feature-rich ride-booking platform connecting riders with drivers.</p>
+                
+                <div class="booking-widget">
+                    <div class="booking-tabs">
+                        <div class="booking-tab active">🚗 Ride Now</div>
+                        <div class="booking-tab">🕒 Schedule</div>
+                        <div class="booking-tab">👥 Share Ride</div>
+                    </div>
+                    <div class="booking-content">
+                        <div class="booking-form">
+                            <h2>Where are you going?</h2>
+                            <div class="input-icon-wrap">
+                                <span class="input-icon">📍</span>
+                                <input type="text" id="pickup" class="icon-input" placeholder="Enter pickup location">
+                            </div>
+                            <div class="input-icon-wrap">
+                                <span class="input-icon">🏁</span>
+                                <input type="text" id="dropoff" class="icon-input" placeholder="Enter destination">
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-col">
+                                    <div class="input-icon-wrap">
+                                        <span class="input-icon">📅</span>
+                                        <input type="date" id="date" class="icon-input">
+                                    </div>
+                                </div>
+                                <div class="form-col">
+                                    <div class="input-icon-wrap">
+                                        <span class="input-icon">⏰</span>
+                                        <input type="time" id="time" class="icon-input">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="ride-type-options">
+                                <div class="ride-type-option active">
+                                    <p>🚗</p>
+                                    <p>Standard</p>
+                                    <p>$12-15</p>
+                                </div>
+                                <div class="ride-type-option">
+                                    <p>✨</p>
+                                    <p>Premium</p>
+                                    <p>$18-22</p>
+                                </div>
+                                <div class="ride-type-option">
+                                    <p>👥</p>
+                                    <p>Shared</p>
+                                    <p>$8-10</p>
+                                </div>
+                            </div>
+                            
+                            <button type="submit" class="btn" id="book-btn">Find My Ride</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+<br><br><br>
+    <section class="features">
+        <div class="container">
+            <h2 class="section-title">Why Choose DriveMe Crazy</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🔒</div>
+                    <div class="feature-content">
+                        <h3>Secure Authentication</h3>
+                        <p>Sign up easily with Email, Google, or Phone with separate profiles for drivers and riders.</p>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📱</div>
+                    <div class="feature-content">
+                        <h3>Easy Booking</h3>
+                        <p>Request rides with just a few taps, set pickup and drop-off locations, and get fare estimates instantly.</p>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💳</div>
+                    <div class="feature-content">
+                        <h3>Flexible Payments</h3>
+                        <p>Pay securely with credit cards, UPI, PayPal or cash with transaction history and receipts.</p>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🛡️</div>
+                    <div class="feature-content">
+                        <h3>Safety First</h3>
+                        <p>Track your ride in real-time with SOS and emergency contact features for peace of mind.</p>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⭐</div>
+                    <div class="feature-content">
+                        <h3>Ratings & Reviews</h3>
+                        <p>Rate your experience and check driver ratings to ensure quality service every time.</p>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🚗</div>
+                    <div class="feature-content">
+                        <h3>Ride Pooling</h3>
+                        <p>Share your ride with others going the same way and enjoy reduced fares.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="testimonials">
+        <div class="container">
+            <h2 class="section-title">What Our Users Say</h2>
+            <div class="testimonial-slider">
+                <div class="testimonial-slide active">
+                    <p class="testimonial-text">"RideConnect has completely transformed the way I commute. The app is incredibly user-friendly, and I've never had to wait more than 5 minutes for a driver."</p>
+                    <p class="testimonial-author">- Sarah Johnson</p>
+                </div>
+                <div class="testimonial-slide">
+                    <p class="testimonial-text">"As a driver, the platform makes it easy to find riders and manage my schedule. The payment process is seamless, and I get paid promptly."</p>
+                    <p class="testimonial-author">- Michael Rodriguez</p>
+                </div>
+                <div class="testimonial-slide">
+                    <p class="testimonial-text">"The safety features give me peace of mind when my teenage children need transportation. I can track their rides in real-time, which is invaluable."</p>
+                    <p class="testimonial-author">- David Thompson</p>
+                </div>
+                <div class="testimonial-nav">
+                    <button id="prev-testimonial">←</button>
+                    <button id="next-testimonial">→</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>DriveMe Crazy</h3>
+                    <p>Connecting riders with drivers for a seamless and secure transportation experience.</p>
+                </div>
+                <div class="footer-column">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="#">Home</a></li>
+                        <li><a href="#">About Us</a></li>
+                        <li><a href="#">Services</a></li>
+                        <li><a href="#">Safety</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>For Riders</h3>
+                    <ul>
+                        <li><a href="#">How to Book</a></li>
+                        <li><a href="#">Fare Estimator</a></li>
+                        <li><a href="#">Promotions</a></li>
+                        <li><a href="#">Ride History</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>For Drivers</h3>
+                    <ul>
+                        <li><a href="#">Become a Driver</a></li>
+                        <li><a href="#">Driver Requirements</a></li>
+                        <li><a href="#">Earnings</a></li>
+                        <li><a href="#">Driver Support</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <div class="social-links">
+                    <a href="#">📱</a>
+                    <a href="#">📘</a>
+                    <a href="#">📸</a>
+                    <a href="#">🐦</a>
+                </div>
+                <p>&copy; 2025 RideConnect. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            
+            let currentSlide = 0;
+            const slides = document.querySelectorAll('.testimonial-slide');
+            const prevBtn = document.getElementById('prev-testimonial');
+            const nextBtn = document.getElementById('next-testimonial');
+            
+            function showSlide(index) {
+                slides.forEach(slide => slide.classList.remove('active'));
+                currentSlide = (index + slides.length) % slides.length;
+                slides[currentSlide].classList.add('active');
+            }
+            
+            prevBtn.addEventListener('click', () => {
+                showSlide(currentSlide - 1);
+            });
+            
+            nextBtn.addEventListener('click', () => {
+                showSlide(currentSlide + 1);
+            });
+            
+            
+            setInterval(() => {
+                showSlide(currentSlide + 1);
+            }, 5000);
+            
+           
+            const bookingTabs = document.querySelectorAll('.booking-tab');
+            bookingTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    bookingTabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+            
+            
+            const rideOptions = document.querySelectorAll('.ride-type-option');
+            rideOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    rideOptions.forEach(opt => opt.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+            
+           
+            const bookBtn = document.getElementById('book-btn');
+            bookBtn.addEventListener('click', function() {
+                const pickup = document.getElementById('pickup').value;
+                const dropoff = document.getElementById('dropoff').value;
+                
+                if (!pickup || !dropoff) {
+                    alert('Please enter both pickup and drop-off locations.');
+                    return;
+                }
+                
+                alert('Looking for drivers near you! This would connect to your backend in a real application.');
+            });
+        });
+    </script>
+</body>
+</html>
