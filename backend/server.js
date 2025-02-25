@@ -22,6 +22,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors({ origin: "http://localhost:5500", credentials: true }));
 app.use(helmet());
 app.use('/api/rides', require('./routes/rideRoutes'));
+app.use('/api/drivers', require('./routes/driverRoutes'));
 
 
 const limiter = rateLimit({
