@@ -19,7 +19,11 @@ const io = new Server(httpServer, {
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors({ origin: "http://localhost:5500", credentials: true }));
+app.use(cors({
+  origin: ["http://localhost:5500", "http://127.0.0.1:5501"],
+  credentials: true
+}));
+
 app.use(helmet());
 app.use('/api/rides', require('./routes/rideRoutes'));
 app.use('/api/drivers', require('./routes/driverRoutes'));

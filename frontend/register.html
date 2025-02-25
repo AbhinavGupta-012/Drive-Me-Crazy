@@ -111,10 +111,10 @@
             </div>
             <button type="submit">Sign Up</button>
         </form>
-        <p class="signin-link">Already have an account? <a href="signin.html">Sign in</a></p>
+        <p class="signin-link">Already have an account? <a href="login.html">Sign in</a></p>
         <p id="error-message" class="error-message"></p>
     </div>
-
+    <script src="auth.js"></script>
     <script>
         
     document.getElementById('signup-form').addEventListener('submit', async function(event) {
@@ -156,7 +156,7 @@
 
             if (response.ok) {
                 alert("Signup successful! Redirecting to login...");
-                window.location.href = "signin.html"; // Redirect to login page
+                window.location.href = "login.html"; // Redirect to login page
             } else {
                 errorMessage.textContent = data.message || "Signup failed. Try again.";
             }
