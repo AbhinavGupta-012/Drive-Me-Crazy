@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Driver Panel</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #4776E6, #8E54E9);
+            color: #333;
+            padding: 40px 20px;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 480px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 8px;
+            background: linear-gradient(90deg, #FF6B6B, #FFD166, #06D6A0, #118AB2, #073B4C);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            color: #2C3E50;
+            font-size: 28px;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .header p {
+            color: #7f8c8d;
+            font-size: 15px;
+        }
+        
+        .input-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .input-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #34495e;
+            font-size: 14px;
+        }
+        
+        .input-group input {
+            width: 100%;
+            padding: 14px 15px 14px 45px;
+            border-radius: 12px;
+            border: 1px solid #e0e0e0;
+            font-size: 15px;
+            transition: all 0.3s;
+            background-color: #f9f9f9;
+        }
+        
+        .input-group input:focus {
+            border-color: #8E54E9;
+            box-shadow: 0 0 0 3px rgba(142, 84, 233, 0.2);
+            outline: none;
+            background-color: #fff;
+        }
+        
+        .input-group i {
+            position: absolute;
+            left: 15px;
+            top: 41px;
+            color: #8E54E9;
+            font-size: 18px;
+        }
+        
+        .btn {
+            display: inline-block;
+            background: linear-gradient(135deg, #4776E6, #8E54E9);
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+            box-shadow: 0 4px 15px rgba(71, 118, 230, 0.4);
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(71, 118, 230, 0.6);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .login-link {
+            margin-top: 25px;
+            font-size: 15px;
+            text-align: center;
+            color: #7f8c8d;
+        }
+        
+        .login-link a {
+            color: #4776E6;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        
+        .login-link a:hover {
+            color: #8E54E9;
+        }
+        
+        .form-divider {
+            height: 1px;
+            background: linear-gradient(to right, transparent, #e0e0e0, transparent);
+            margin: 10px 0 25px;
+        }
+        
+        .vehicle-icon {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        
+        .vehicle-icon i {
+            font-size: 48px;
+            color: #4776E6;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="vehicle-icon">
+            <i class="fas fa-car-side"></i>
+        </div>
+        <div class="header">
+            <h1>Driver Registration</h1>
+            <p>Join our network and start earning today</p>
+        </div>
+        <form id="driverForm">
+            <div class="input-group">
+                <label for="name">Full Name</label>
+                <i class="fas fa-user"></i>
+                <input type="text" id="name" placeholder="Enter your full name" required>
+            </div>
+            <div class="input-group">
+                <label for="email">Email Address</label>
+                <i class="fas fa-envelope"></i>
+                <input type="email" id="email" placeholder="yourname@example.com" required>
+            </div>
+            <div class="input-group">
+                <label for="password">Password</label>
+                <i class="fas fa-lock"></i>
+                <input type="password" id="password" placeholder="Create a secure password" required>
+            </div>
+            
+            <div class="form-divider"></div>
+            
+            <div class="input-group">
+                <label for="vehicle">Vehicle Type</label>
+                <i class="fas fa-car"></i>
+                <input type="text" id="vehicle" placeholder="e.g. Sedan, SUV, Bike" required>
+            </div>
+            <div class="input-group">
+                <label for="license">Driving License Number</label>
+                <i class="fas fa-id-card"></i>
+                <input type="text" id="license" placeholder="Enter your license number" required>
+            </div>
+            <div class="input-group">
+                <label for="aadhar">Aadhar Card Number</label>
+                <i class="fas fa-fingerprint"></i>
+                <input type="text" id="aadhar" placeholder="Enter your Aadhar number" required>
+            </div>
+            
+            <button type="submit" class="btn">Register Now</button>
+        </form>
+        <p class="login-link">Already registered? <a href="#">Sign in to your account</a></p>
+    </div>
+    
+    <script>
+        document.getElementById("driverForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            alert("Driver registered successfully! (This would connect to the backend in a real application)");
+        });
+    </script>
+</body>
+</html>
