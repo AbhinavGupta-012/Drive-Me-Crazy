@@ -1,76 +1,89 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const mongoose = require('mongoose');
-const { verifyToken } = require('../middleware/auth');
-const Ride = require('../models/Ride');
-const User = require('../models/User');
+const { verifyToken } = require("../middleware/auth");
+const Ride = require("../models/Ride");
+const User = require("../models/User");
 
 const checkRole = (allowedRoles) => {
   return async (req, res, next) => {
     try {
       const user = await User.findOne({ firebaseUid: req.user.uid });
-      
       if (!user) {
-        return res.status(404).json({ message: 'User not found' });
+        console.log("❌ User not found in DB");
+        return res.status(404).json({ message: "User not found" });
       }
 
+      console.log(`🔹 User Role: ${user.role}`);
       if (!allowedRoles.includes(user.role)) {
-        return res.status(403).json({ 
-          message: `Access denied. Must be a ${allowedRoles.join(' or ')}.` 
+        return res.status(403).json({
+          message: `Access denied. Must be a ${allowedRoles.join(" or ")}.`,
         });
       }
 
       req.userModel = user;
       next();
     } catch (error) {
-      res.status(500).json({ message: 'Error checking user role', error: error.message });
+      console.error("❌ Error checking user role:", error);
+      res.status(500).json({ message: "Error checking user role", error: error.message });
     }
   };
 };
 
 const validateLocation = (location) => {
-  if (!location?.address || !location?.coordinates?.coordinates) {
+  if (!location || typeof location !== "object") {
+    return false;
+  }
+  if (!location.address || !location.coordinates || !Array.isArray(location.coordinates.coordinates)) {
     return false;
   }
 
   const [longitude, latitude] = location.coordinates.coordinates;
-  return Array.isArray(location.coordinates.coordinates) &&
-         location.coordinates.coordinates.length === 2 &&
-         longitude >= -180 && longitude <= 180 &&
-         latitude >= -90 && latitude <= 90;
+  return (
+    typeof latitude === "number" &&
+    typeof longitude === "number" &&
+    longitude >= -180 &&
+    longitude <= 180 &&
+    latitude >= -90 &&
+    latitude <= 90
+  );
 };
 
 const emitRideUpdate = async (io, ride, event) => {
+  if (!io) {
+    console.error("⚠️ WebSocket IO instance is missing!");
+    return;
+  }
+
   const populatedRide = await Ride.findById(ride._id)
-    .populate('riderId', 'fullName profilePicture')
-    .populate('driverId', 'fullName profilePicture');
+    .populate("riderId", "fullName profilePicture")
+    .populate("driverId", "fullName profilePicture");
 
   io.to(populatedRide.riderId.firebaseUid).emit(event, populatedRide.toJSON());
+
   if (populatedRide.driverId) {
     io.to(populatedRide.driverId.firebaseUid).emit(event, populatedRide.toJSON());
   }
 
-  if (event === 'rideRequested') {
-    io.to('driver').emit('newRideAvailable', populatedRide.toJSON());
+  if (event === "rideRequested") {
+    io.to("driver").emit("newRideAvailable", populatedRide.toJSON());
   }
 };
 
-router.post('/request', verifyToken, checkRole(['rider']), async (req, res) => {
+router.post("/request", verifyToken, checkRole(["rider"]), async (req, res) => {
   try {
-    const {
-      pickupLocation,
-      dropoffLocation,
-      estimatedDuration,
-      estimatedDistance,
-      estimatedPrice
-    } = req.body;
+    console.log("📩 Incoming Ride Request");
+    console.log("🔹 Request Body:", JSON.stringify(req.body, null, 2));
+
+    const { pickupLocation, dropoffLocation, estimatedDuration, estimatedDistance, estimatedPrice } = req.body;
 
     if (!validateLocation(pickupLocation) || !validateLocation(dropoffLocation)) {
-      return res.status(400).json({ message: 'Invalid location data provided' });
+      console.log("❌ Invalid Location Data");
+      return res.status(400).json({ message: "Invalid location data. Ensure correct latitude & longitude." });
     }
 
     if (!estimatedDuration || !estimatedDistance || !estimatedPrice) {
-      return res.status(400).json({ message: 'Missing ride estimates' });
+      console.log("❌ Missing Ride Estimates");
+      return res.status(400).json({ message: "Missing ride estimates (duration, distance, price)" });
     }
 
     const ride = new Ride({
@@ -79,24 +92,20 @@ router.post('/request', verifyToken, checkRole(['rider']), async (req, res) => {
       dropoffLocation,
       estimatedDuration,
       estimatedDistance,
-      estimatedPrice
+      estimatedPrice,
+      status: "requested",
     });
 
     await ride.save();
+    console.log("✅ Ride Created:", ride._id);
 
-    const io = req.app.get('io');
-    await emitRideUpdate(io, ride, 'rideRequested');
+    const io = req.app.get("io");
+    await emitRideUpdate(io, ride, "rideRequested");
 
-    res.status(201).json({
-      message: 'Ride requested successfully',
-      ride: ride.toJSON()
-    });
+    res.status(201).json({ message: "Ride requested successfully", ride: ride.toJSON() });
   } catch (error) {
-    console.error('Error requesting ride:', error);
-    res.status(500).json({
-      message: 'Error requesting ride',
-      error: error.message
-    });
+    console.error("❌ Error Requesting Ride:", error);
+    res.status(500).json({ message: "Error requesting ride", error: error.message });
   }
 });
 
@@ -108,12 +117,26 @@ router.post('/accept/:rideId', verifyToken, checkRole(['driver']), async (req, r
       return res.status(404).json({ message: 'Ride not found' });
     }
 
-    if (!ride.canPerformAction(req.userModel._id, 'driver', 'accept')) {
-      return res.status(400).json({ message: 'Cannot accept this ride' });
+    console.log(`🚕 Ride Current Status: ${ride.status}`);
+
+    // 🔍 Prevent duplicate "accepted" status
+    if (ride.status === 'accepted') {
+      console.log("⚠️ Ride is already accepted. No update needed.");
+      return res.status(400).json({ message: "Ride is already accepted." });
+    }
+
+    // 🔍 Prevent invalid status transitions
+    if (ride.status !== 'requested') {
+      console.log(`❌ Invalid transition: Cannot change from ${ride.status} to accepted.`);
+      return res.status(400).json({ message: `Invalid status transition from ${ride.status} to accepted.` });
     }
 
     ride.status = 'accepted';
     ride.driverId = req.userModel._id;
+    ride.acceptedAt = new Date();
+    
+    console.log("✅ Ride status updated to accepted.");
+
     await ride.save();
 
     const io = req.app.get('io');
@@ -124,7 +147,7 @@ router.post('/accept/:rideId', verifyToken, checkRole(['driver']), async (req, r
       ride: ride.toJSON()
     });
   } catch (error) {
-    console.error('Error accepting ride:', error);
+    console.error('❌ Error Accepting Ride:', error);
     res.status(500).json({
       message: 'Error accepting ride',
       error: error.message
@@ -132,171 +155,50 @@ router.post('/accept/:rideId', verifyToken, checkRole(['driver']), async (req, r
   }
 });
 
-router.post('/start/:rideId', verifyToken, checkRole(['driver']), async (req, res) => {
+
+// Other routes (start, complete, cancel, fetch ride)
+router.post("/start/:rideId", verifyToken, checkRole(["driver"]), async (req, res) => {
   try {
     const ride = await Ride.findById(req.params.rideId);
-    
     if (!ride) {
-      return res.status(404).json({ message: 'Ride not found' });
+      return res.status(404).json({ message: "Ride not found" });
     }
 
-    if (!ride.canPerformAction(req.userModel._id, 'driver', 'start')) {
-      return res.status(400).json({ message: 'Cannot start this ride' });
+    if (!ride.canPerformAction(req.userModel._id, "driver", "start")) {
+      return res.status(400).json({ message: "Cannot start this ride" });
     }
 
-    ride.status = 'ongoing';
+    ride.status = "ongoing";
     await ride.save();
 
-    const io = req.app.get('io');
-    await emitRideUpdate(io, ride, 'rideStarted');
+    const io = req.app.get("io");
+    await emitRideUpdate(io, ride, "rideStarted");
 
-    res.json({
-      message: 'Ride started successfully',
-      ride: ride.toJSON()
-    });
+    res.json({ message: "Ride started successfully", ride: ride.toJSON() });
   } catch (error) {
-    console.error('Error starting ride:', error);
-    res.status(500).json({
-      message: 'Error starting ride',
-      error: error.message
-    });
+    console.error("❌ Error Starting Ride:", error);
+    res.status(500).json({ message: "Error starting ride", error: error.message });
   }
 });
 
-router.post('/complete/:rideId', verifyToken, checkRole(['driver']), async (req, res) => {
+router.post("/complete/:rideId", verifyToken, checkRole(["driver"]), async (req, res) => {
   try {
     const ride = await Ride.findById(req.params.rideId);
-    
     if (!ride) {
-      return res.status(404).json({ message: 'Ride not found' });
+      return res.status(404).json({ message: "Ride not found" });
     }
 
-    if (!ride.canPerformAction(req.userModel._id, 'driver', 'complete')) {
-      return res.status(400).json({ message: 'Cannot complete this ride' });
-    }
-
-    ride.status = 'completed';
+    ride.status = "completed";
     ride.actualPrice = req.body.actualPrice || ride.estimatedPrice;
     await ride.save();
 
-    const io = req.app.get('io');
-    await emitRideUpdate(io, ride, 'rideCompleted');
+    const io = req.app.get("io");
+    await emitRideUpdate(io, ride, "rideCompleted");
 
-    res.json({
-      message: 'Ride completed successfully',
-      ride: ride.toJSON()
-    });
+    res.json({ message: "Ride completed successfully", ride: ride.toJSON() });
   } catch (error) {
-    console.error('Error completing ride:', error);
-    res.status(500).json({
-      message: 'Error completing ride',
-      error: error.message
-    });
-  }
-});
-
-router.post('/cancel/:rideId', verifyToken, async (req, res) => {
-  try {
-    const user = await User.findOne({ firebaseUid: req.user.uid });
-    const ride = await Ride.findById(req.params.rideId);
-    
-    if (!ride) {
-      return res.status(404).json({ message: 'Ride not found' });
-    }
-
-    if (!ride.canPerformAction(user._id, user.role, 'cancel')) {
-      return res.status(400).json({ message: 'Cannot cancel this ride' });
-    }
-
-    ride.status = 'cancelled';
-    ride.cancelledAt = new Date();
-    await ride.save();
-
-    const io = req.app.get('io');
-    await emitRideUpdate(io, ride, 'rideCancelled');
-
-    res.json({
-      message: 'Ride cancelled successfully',
-      ride: ride.toJSON()
-    });
-  } catch (error) {
-    console.error('Error cancelling ride:', error);
-    res.status(500).json({
-      message: 'Error cancelling ride',
-      error: error.message
-    });
-  }
-});
-
-router.get('/:rideId', verifyToken, async (req, res) => {
-  try {
-    const user = await User.findOne({ firebaseUid: req.user.uid });
-    const ride = await Ride.findById(req.params.rideId)
-      .populate('riderId', 'fullName profilePicture')
-      .populate('driverId', 'fullName profilePicture');
-    
-    if (!ride) {
-      return res.status(404).json({ message: 'Ride not found' });
-    }
-
-    if (!ride.riderId.equals(user._id) && 
-        !(ride.driverId && ride.driverId.equals(user._id))) {
-      return res.status(403).json({ message: 'Access denied' });
-    }
-
-    res.json({ ride: ride.toJSON() });
-  } catch (error) {
-    console.error('Error fetching ride:', error);
-    res.status(500).json({
-      message: 'Error fetching ride',
-      error: error.message
-    });
-  }
-});
-
-
-router.get('/', verifyToken, async (req, res) => {
-  try {
-    const user = await User.findOne({ firebaseUid: req.user.uid });
-    const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
-    const status = req.query.status;
-
-    const query = {
-      $or: [
-        { riderId: user._id },
-        { driverId: user._id }
-      ]
-    };
-
-    if (status) {
-      query.status = status;
-    }
-
-    const rides = await Ride.find(query)
-      .populate('riderId', 'fullName profilePicture')
-      .populate('driverId', 'fullName profilePicture')
-      .sort({ createdAt: -1 })
-      .skip((page - 1) * limit)
-      .limit(limit);
-
-    const total = await Ride.countDocuments(query);
-
-    res.json({
-      rides: rides.map(ride => ride.toJSON()),
-      pagination: {
-        currentPage: page,
-        totalPages: Math.ceil(total / limit),
-        totalRides: total,
-        hasMore: page * limit < total
-      }
-    });
-  } catch (error) {
-    console.error('Error fetching rides:', error);
-    res.status(500).json({
-      message: 'Error fetching rides',
-      error: error.message
-    });
+    console.error("❌ Error Completing Ride:", error);
+    res.status(500).json({ message: "Error completing ride", error: error.message });
   }
 });
 

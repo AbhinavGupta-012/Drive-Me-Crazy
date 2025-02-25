@@ -197,6 +197,7 @@ router.put('/profile', verifyToken, async (req, res) => {
 
 router.post('/request', verifyToken, async (req, res) => {
   try {
+    console.log("🔹 Full Request Body:", JSON.stringify(req.body, null, 2));
       console.log("📩 Incoming Ride Request");
       console.log("🔹 Full Request Body:", req.body);
 

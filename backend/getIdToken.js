@@ -15,8 +15,12 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
 // 🔹 User Credentials (Change if needed)
-const userEmail = "johndoe@test.com";  // Replace with a real test user email
-const userPassword = "SecurePass123";    // Replace with correct password
+// const userEmail = "johndoe@test.com";  // Replace with a real test user email
+// const userPassword = "SecurePass123";    // Replace with correct password
+
+const userEmail = "driver@example.com";  // Replace with the driver’s email
+const userPassword = "DriverPass123";    // Replace with the driver's correct password
+
 
 async function getIdToken() {
     try {

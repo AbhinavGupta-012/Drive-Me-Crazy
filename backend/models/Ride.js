@@ -17,9 +17,7 @@ const locationSchema = new mongoose.Schema({
       required: true,
       validate: {
         validator: function(v) {
-          return v.length === 2 && 
-                 v[0] >= -180 && v[0] <= 180 && 
-                 v[1] >= -90 && v[1] <= 90;
+          return v.length === 2 && v[0] >= -180 && v[0] <= 180 && v[1] >= -90 && v[1] <= 90;
         },
         message: 'Invalid coordinates'
       }
@@ -79,24 +77,6 @@ const rideSchema = new mongoose.Schema({
     type: String,
     enum: ['pending', 'completed', 'failed', 'refunded'],
     default: 'pending'
-  },
-  riderRating: {
-    rating: {
-      type: Number,
-      min: 1,
-      max: 5
-    },
-    comment: String,
-    createdAt: Date
-  },
-  driverRating: {
-    rating: {
-      type: Number,
-      min: 1,
-      max: 5
-    },
-    comment: String,
-    createdAt: Date
   }
 }, {
   timestamps: true
@@ -126,10 +106,12 @@ rideSchema.pre('save', function(next) {
     return next();
   }
 
-  const validNextStates = validTransitions[this._oldStatus || this.status];
-  if (!validNextStates.includes(this.status)) {
-    return next(new Error(`Invalid status transition from ${this._oldStatus} to ${this.status}`));
-  }
+  const validNextStates = validTransitions[this._oldStatus || 'requested'];
+if (!validNextStates.includes(this.status)) {
+  console.log(`🚨 Invalid status transition detected! Current: ${this._oldStatus}, New: ${this.status}`);
+  return next(new Error(`Invalid status transition from ${this._oldStatus || 'unknown'} to ${this.status}`));
+}
+
 
   const timestampField = `${this.status}At`;
   if (this[timestampField] === undefined) {
@@ -139,25 +121,15 @@ rideSchema.pre('save', function(next) {
   next();
 });
 
+
 rideSchema.methods.canPerformAction = function(userId, userRole, action) {
-  switch (action) {
-    case 'accept':
-      return userRole === 'driver' && this.status === 'requested';
-    case 'start':
-      return userRole === 'driver' && 
-             this.driverId.equals(userId) && 
-             this.status === 'accepted';
-    case 'complete':
-      return userRole === 'driver' && 
-             this.driverId.equals(userId) && 
-             this.status === 'ongoing';
-    case 'cancel':
-      return (this.riderId.equals(userId) || 
-              (this.driverId && this.driverId.equals(userId))) && 
-             ['requested', 'accepted', 'ongoing'].includes(this.status);
-    default:
-      return false;
-  }
+  const actions = {
+    accept: () => userRole === 'driver' && this.status === 'requested',
+    start: () => userRole === 'driver' && this.driverId.equals(userId) && this.status === 'accepted',
+    complete: () => userRole === 'driver' && this.driverId.equals(userId) && this.status === 'ongoing',
+    cancel: () => (this.riderId.equals(userId) || (this.driverId && this.driverId.equals(userId))) && ['requested', 'accepted', 'ongoing'].includes(this.status)
+  };
+  return actions[action] ? actions[action]() : false;
 };
 
 rideSchema.methods.toJSON = function() {
