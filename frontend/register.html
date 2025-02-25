@@ -118,15 +118,14 @@
     <script>
         
     document.getElementById('signup-form').addEventListener('submit', async function(event) {
-        event.preventDefault(); // Prevent page reload
-
+        event.preventDefault();
+        
         const name = document.getElementById('name').value;
         const email = document.getElementById('email').value;
         const password = document.getElementById('password').value;
         const confirmPassword = document.getElementById('confirm-password').value;
         const errorMessage = document.getElementById('error-message');
 
-        // Validate fields
         if (!name || !email || !password || !confirmPassword) {
             errorMessage.textContent = "All fields are required.";
             return;
@@ -136,7 +135,6 @@
             return;
         }
 
-        // Data to send to backend
         const userData = {
             fullName: name,
             email: email,
@@ -156,7 +154,7 @@
 
             if (response.ok) {
                 alert("Signup successful! Redirecting to login...");
-                window.location.href = "login.html"; // Redirect to login page
+                window.location.href = "login.html";
             } else {
                 errorMessage.textContent = data.message || "Signup failed. Try again.";
             }

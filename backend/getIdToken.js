@@ -4,27 +4,22 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-// 🔹 Firebase Web App Configuration
 const firebaseConfig = {
-  apiKey: process.env.FIREBASE_API_KEY, // Your Firebase Web API Key
-  authDomain: process.env.FIREBASE_AUTH_DOMAIN, // Your Firebase Auth Domain
+  apiKey: process.env.FIREBASE_API_KEY,
+  authDomain: process.env.FIREBASE_AUTH_DOMAIN,
 };
 
-// 🔹 Initialize Firebase App
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
-// 🔹 User Credentials (Change if needed)
-// const userEmail = "johndoe@test.com";  // Replace with a real test user email
-// const userPassword = "SecurePass123";    // Replace with correct password
-
-const userEmail = "driver@example.com";  // Replace with the driver’s email
-const userPassword = "DriverPass123";    // Replace with the driver's correct password
+// const userEmail = "johndoe@test.com";
+// const userPassword = "SecurePass123";
+const userEmail = "driver@example.com"; 
+const userPassword = "DriverPass123";
 
 
 async function getIdToken() {
     try {
-        // 🔹 Sign in the user
         const userCredential = await signInWithEmailAndPassword(auth, userEmail, userPassword);
         const idToken = await userCredential.user.getIdToken();
         

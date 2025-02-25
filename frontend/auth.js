@@ -1,12 +1,9 @@
-// Base URL of the backend
 const BASE_URL = 'http://localhost:5000/api';
 
-// Helper function to get stored token
 function getAuthToken() {
     return localStorage.getItem('token');
 }
 
-// Register Driver
 async function registerDriver(fullName, email, phone, vehicle, license) {
     const response = await fetch(`${BASE_URL}/driver/register`, {
         method: 'POST',
@@ -23,7 +20,6 @@ async function registerDriver(fullName, email, phone, vehicle, license) {
     }
 }
 
-// Fetch Pending Drivers (Admin)
 async function fetchPendingDrivers() {
     const token = getAuthToken();
     if (!token) return window.location.href = 'login.html';
@@ -51,7 +47,6 @@ async function fetchPendingDrivers() {
     }
 }
 
-// Approve Driver
 async function approveDriver(driverId) {
     const response = await fetch(`${BASE_URL}/admin/approve-driver/${driverId}`, {
         method: 'PUT',
@@ -67,7 +62,6 @@ async function approveDriver(driverId) {
     }
 }
 
-// Reject Driver
 async function rejectDriver(driverId) {
     const response = await fetch(`${BASE_URL}/admin/reject-driver/${driverId}`, {
         method: 'DELETE',
@@ -83,12 +77,10 @@ async function rejectDriver(driverId) {
     }
 }
 
-// Auto-fetch pending drivers if on admin panel
 if (document.getElementById('admin-panel')) {
     fetchPendingDrivers();
 }
 
-// Event Listener for Driver Registration
 if (document.getElementById('driver-register-form')) {
     document.getElementById('driver-register-form').addEventListener('submit', (e) => {
         e.preventDefault();

@@ -1,8 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const Driver = require('../models/Driver'); // Driver Model
+const Driver = require('../models/Driver');
 
-// Register Driver (Pending Approval)
 router.post('/register', async (req, res) => {
     const { fullName, email, phone, vehicle, license } = req.body;
     try {
@@ -14,7 +13,6 @@ router.post('/register', async (req, res) => {
     }
 });
 
-// Get Pending Drivers (Admin)
 router.get('/admin/drivers', async (req, res) => {
     try {
         const pendingDrivers = await Driver.find({ status: 'pending' });
@@ -24,7 +22,6 @@ router.get('/admin/drivers', async (req, res) => {
     }
 });
 
-// Approve Driver
 router.put('/admin/approve-driver/:id', async (req, res) => {
     try {
         await Driver.findByIdAndUpdate(req.params.id, { status: 'approved' });
@@ -34,7 +31,6 @@ router.put('/admin/approve-driver/:id', async (req, res) => {
     }
 });
 
-// Reject Driver
 router.delete('/admin/reject-driver/:id', async (req, res) => {
     try {
         await Driver.findByIdAndDelete(req.params.id);

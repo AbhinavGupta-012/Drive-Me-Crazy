@@ -764,7 +764,6 @@
     <script src="auth.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Mobile menu toggle
             const mobileMenuBtn = document.getElementById('mobile-menu-toggle');
             const navMenu = document.getElementById('nav-menu');
             
@@ -780,7 +779,6 @@
                 }
             });
             
-            // Testimonial slider
             let currentSlide = 0;
             const slides = document.querySelectorAll('.testimonial-slide');
             const prevBtn = document.getElementById('prev-testimonial');
@@ -800,12 +798,10 @@
                 showSlide(currentSlide + 1);
             });
             
-            // Auto rotate testimonials
             let slideInterval = setInterval(() => {
                 showSlide(currentSlide + 1);
             }, 5000);
             
-            // Pause auto rotation when user interacts
             [prevBtn, nextBtn].forEach(btn => {
                 btn.addEventListener('click', () => {
                     clearInterval(slideInterval);
@@ -815,7 +811,6 @@
                 });
             });
             
-            // Booking tabs
             const bookingTabs = document.querySelectorAll('.booking-tab');
             bookingTabs.forEach(tab => {
                 tab.addEventListener('click', function() {
@@ -824,7 +819,6 @@
                 });
             });
             
-            // Ride type selection
             const rideOptions = document.querySelectorAll('.ride-type-option');
             rideOptions.forEach(option => {
                 option.addEventListener('click', function() {
@@ -833,7 +827,6 @@
                 });
             });
             
-            // Booking form submission
             const bookBtn = document.getElementById('book-btn');
             bookBtn.addEventListener('click', function() {
                 const pickup = document.getElementById('pickup').value;

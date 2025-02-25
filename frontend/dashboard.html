@@ -9,8 +9,8 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f4f4f4; /* Light background */
-            color: #333; /* Dark text */
+            background-color: #f4f4f4;
+            color: #333;
         }
 
         .dashboard {
@@ -19,7 +19,7 @@
 
         .sidebar {
             width: 200px;
-            background: #2c3e50; /* Header/Footer color */
+            background: #2c3e50;
             color: white;
             padding: 15px;
             height: 100vh;
@@ -41,7 +41,7 @@
         }
 
         .sidebar ul li a:hover {
-            color: #3498db; /* Accent color */
+            color: #3498db;
         }
 
         .content {
@@ -70,7 +70,7 @@
         }
 
         th {
-            background-color: #f9f9f9; /* Light background */
+            background-color: #f9f9f9;
         }
 
         .add-user-form {
@@ -89,7 +89,7 @@
         label {
             display: block;
             margin-bottom: 5px;
-            color: #2c3e50; /* Header/Footer color */
+            color: #2c3e50;
         }
 
         input[type="text"], input[type="email"], select {
@@ -110,7 +110,7 @@
         }
 
         button {
-            background-color: #3498db; /* Accent color */
+            background-color: #3498db;
             color: white;
             padding: 1rem 2rem;
             border: none;
@@ -177,11 +177,11 @@
     </div>
     <script src="auth.js"></script>
     <script>
-        let users = []; // Array to store user data
+        let users = [];
 
         function showUsers() {
             const tableBody = document.querySelector("#userTable tbody");
-            tableBody.innerHTML = ""; // Clear existing table rows
+            tableBody.innerHTML = "";
 
             users.forEach(user => {
                 const row = tableBody.insertRow();
@@ -202,17 +202,16 @@
 
             if (fullName && email && role) {
                 users.push({ fullName, email, role });
-                showUsers(); // Refresh the user table
-                // Clear form fields
+                showUsers();
+
                 document.getElementById("fullName").value = "";
                 document.getElementById("email").value = "";
-                document.getElementById("role").value = "admin"; // Reset role to default
+                document.getElementById("role").value = "admin";
             } else {
                 alert("Please fill in all fields.");
             }
         }
 
-        // Initialize user table on page load
         showUsers();
     </script>
 </body>

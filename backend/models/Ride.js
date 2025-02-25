@@ -118,7 +118,6 @@ rideSchema.pre('save', function (next) {
   next();
 });
 
-// ✅ Methods for user actions
 rideSchema.methods.canPerformAction = function (userId, userRole, action) {
   const actions = {
     accept: () => userRole === 'driver' && this.status === 'requested',
@@ -129,12 +128,10 @@ rideSchema.methods.canPerformAction = function (userId, userRole, action) {
   return actions[action] ? actions[action]() : false;
 };
 
-// ✅ Get ride details with user info
 rideSchema.methods.getRideDetails = async function () {
   return await this.populate('riderId driverId').execPopulate();
 };
 
-// ✅ Cleanup response
 rideSchema.methods.toJSON = function () {
   const obj = this.toObject();
   delete obj.__v;

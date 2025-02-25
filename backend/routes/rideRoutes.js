@@ -119,13 +119,11 @@ router.post('/accept/:rideId', verifyToken, checkRole(['driver']), async (req, r
 
     console.log(`🚕 Ride Current Status: ${ride.status}`);
 
-    // 🔍 Prevent duplicate "accepted" status
     if (ride.status === 'accepted') {
       console.log("⚠️ Ride is already accepted. No update needed.");
       return res.status(400).json({ message: "Ride is already accepted." });
     }
-
-    // 🔍 Prevent invalid status transitions
+=
     if (ride.status !== 'requested') {
       console.log(`❌ Invalid transition: Cannot change from ${ride.status} to accepted.`);
       return res.status(400).json({ message: `Invalid status transition from ${ride.status} to accepted.` });
@@ -156,7 +154,6 @@ router.post('/accept/:rideId', verifyToken, checkRole(['driver']), async (req, r
 });
 
 
-// Other routes (start, complete, cancel, fetch ride)
 router.post("/start/:rideId", verifyToken, checkRole(["driver"]), async (req, res) => {
   try {
     const ride = await Ride.findById(req.params.rideId);
