@@ -2,6 +2,8 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
+const rateLimit = require("express-rate-limit");
+const helmet = require("helmet");
 const { createServer } = require('http');
 const { Server } = require('socket.io');
 const admin = require('./config/firebase-config');
@@ -17,6 +19,13 @@ const io = new Server(httpServer, {
 
 app.use(express.json());
 app.use(cors({ origin: "http://localhost:5500", credentials: true }));
+app.use(helmet());
+
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100
+});
+app.use(limiter);
 
 io.use(async (socket, next) => {
   try {
@@ -66,6 +75,12 @@ const connectDB = async () => {
 
 connectDB();
 
+app.use((req, res, next) => {
+  console.log(`📩 Incoming Request: ${req.method} ${req.url}`);
+  console.log("🔹 Headers:", req.headers);
+  next();
+});
+
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/rides', require('./routes/rideRoutes'));
 
@@ -79,6 +94,11 @@ app.use((err, req, res, next) => {
     message: 'Something went wrong!',
     error: process.env.NODE_ENV === 'development' ? err.message : undefined
   });
+});
+
+app.use((req, res, next) => {
+  console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
+  next();
 });
 
 const PORT = process.env.PORT || 5000;

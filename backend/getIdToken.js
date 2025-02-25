@@ -1,13 +1,34 @@
-import admin from "./firebaseAdmin.js";
+import { initializeApp } from "firebase/app";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import dotenv from "dotenv";
 
-async function verifyIdToken(idToken) {
+dotenv.config();
+
+// 🔹 Firebase Web App Configuration
+const firebaseConfig = {
+  apiKey: process.env.FIREBASE_API_KEY, // Your Firebase Web API Key
+  authDomain: process.env.FIREBASE_AUTH_DOMAIN, // Your Firebase Auth Domain
+};
+
+// 🔹 Initialize Firebase App
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+// 🔹 User Credentials (Change if needed)
+const userEmail = "johndoe@test.com";  // Replace with a real test user email
+const userPassword = "SecurePass123";    // Replace with correct password
+
+async function getIdToken() {
     try {
-        const decodedToken = await admin.auth().verifyIdToken(idToken);
-        console.log("Decoded Token:", decodedToken);
+        // 🔹 Sign in the user
+        const userCredential = await signInWithEmailAndPassword(auth, userEmail, userPassword);
+        const idToken = await userCredential.user.getIdToken();
+        
+        console.log("✅ Generated Firebase ID Token:");
+        console.log(idToken);
     } catch (error) {
-        console.error("Error verifying token:", error.message);
+        console.error("❌ Error generating ID token:", error.message);
     }
 }
 
-const testToken = "";
-verifyIdToken(testToken);
+getIdToken();
