@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel</title>
+    <style>
+        :root {
+            --primary: #1976d2;
+            --primary-light: #e3f2fd;
+            --primary-dark: #0d47a1;
+            --success: #2e7d32;
+            --error: #d32f2f;
+            --background: #f5f7fa;
+            --card: #ffffff;
+            --text: #333333;
+            --text-light: #757575;
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --shadow-hover: 0 10px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+        
+        body {
+            background-color: var(--background);
+            color: var(--text);
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--card);
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            color: var(--primary);
+            font-size: 24px;
+            font-weight: 600;
+        }
+        
+        .stats {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .stat-card {
+            flex: 1;
+            background: linear-gradient(135deg, var(--primary-light), #ffffff);
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+        
+        .stat-card h3 {
+            font-size: 14px;
+            color: var(--text-light);
+            margin-bottom: 5px;
+        }
+        
+        .stat-card p {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+        
+        .section-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .section-title h2 {
+            font-size: 18px;
+            color: var(--text);
+        }
+        
+        .search-bar {
+            display: flex;
+            align-items: center;
+            background: #f1f3f5;
+            border-radius: 8px;
+            padding: 5px 15px;
+            width: 250px;
+        }
+        
+        .search-bar input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            padding: 8px;
+            outline: none;
+        }
+        
+        .driver-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .driver-card {
+            background: var(--card);
+            margin: 12px 0;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+        }
+        
+        .driver-card:hover {
+            box-shadow: var(--shadow-hover);
+            transform: translateY(-2px);
+            border-left-color: var(--primary);
+        }
+        
+        .driver-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            text-align: left;
+        }
+        
+        .avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: var(--primary-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: var(--primary);
+            font-size: 18px;
+        }
+        
+        .driver-details h3 {
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+        
+        .driver-details p {
+            color: var(--text-light);
+            font-size: 14px;
+            margin-bottom: 3px;
+        }
+        
+        .tag {
+            background-color: var(--primary-light);
+            color: var(--primary);
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            display: inline-block;
+            margin-top: 5px;
+        }
+        
+        .actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            font-size: 14px;
+            font-weight: 500;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .btn:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        .btn.approve {
+            background-color: var(--success);
+        }
+        
+        .btn.reject {
+            background-color: var(--error);
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 40px 0;
+            color: var(--text-light);
+        }
+        
+        .empty-state p {
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            .stats {
+                flex-direction: column;
+            }
+            
+            .section-title {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .search-bar {
+                width: 100%;
+            }
+            
+            .driver-card {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .actions {
+                margin-top: 15px;
+                width: 100%;
+                justify-content: flex-end;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Admin Dashboard</h1>
+            <div>
+                <span>🔔</span>
+            </div>
+        </div>
+        
+        <div class="stats">
+            <div class="stat-card">
+                <h3>Total Drivers</h3>
+                <p>24</p>
+            </div>
+            <div class="stat-card">
+                <h3>Pending Approval</h3>
+                <p>2</p>
+            </div>
+            <div class="stat-card">
+                <h3>Active Today</h3>
+                <p>18</p>
+            </div>
+        </div>
+        
+        <div class="section-title">
+            <h2>Driver Approval Requests</h2>
+            <div class="search-bar">
+                <input type="text" placeholder="Search drivers...">
+                <span>🔍</span>
+            </div>
+        </div>
+        
+        <ul class="driver-list" id="driverList">
+            <div class="empty-state">
+                <p>No pending driver requests.</p>
+            </div>
+        </ul>
+    </div>
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const driverList = document.getElementById("driverList");
+            
+            const pendingDrivers = [
+                { 
+                    name: "John Doe", 
+                    email: "john@example.com", 
+                    vehicle: "Sedan", 
+                    phone: "+1 (555) 123-4567",
+                    joinDate: "Feb 20, 2025"
+                },
+                { 
+                    name: "Jane Smith", 
+                    email: "jane@example.com", 
+                    vehicle: "SUV",
+                    phone: "+1 (555) 987-6543",
+                    joinDate: "Feb 23, 2025"
+                }
+            ];
+            
+            if (pendingDrivers.length > 0) {
+                driverList.innerHTML = "";
+                pendingDrivers.forEach(driver => {
+                    const initials = driver.name.split(' ').map(n => n[0]).join('');
+                    const li = document.createElement("li");
+                    li.classList.add("driver-card");
+                    li.innerHTML = `
+                        <div class="driver-info">
+                            <div class="avatar">${initials}</div>
+                            <div class="driver-details">
+                                <h3>${driver.name}</h3>
+                                <p>📧 ${driver.email}</p>
+                                <p>📱 ${driver.phone}</p>
+                                <p>📅 Applied: ${driver.joinDate}</p>
+                                <span class="tag">${driver.vehicle}</span>
+                            </div>
+                        </div>
+                        <div class="actions">
+                            <button class="btn approve">✓ Approve</button>
+                            <button class="btn reject">✕ Reject</button>
+                        </div>`;
+                    driverList.appendChild(li);
+                });
+            }
+            
+            // Search functionality
+            const searchInput = document.querySelector('.search-bar input');
+            searchInput.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                const driverCards = document.querySelectorAll('.driver-card');
+                
+                driverCards.forEach(card => {
+                    const driverText = card.textContent.toLowerCase();
+                    if (driverText.includes(searchTerm)) {
+                        card.style.display = 'flex';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
