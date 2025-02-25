@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4; /* Light background */
+            color: #333; /* Dark text */
+        }
+
+        .dashboard {
+            display: flex;
+        }
+
+        .sidebar {
+            width: 200px;
+            background: #2c3e50; /* Header/Footer color */
+            color: white;
+            padding: 15px;
+            height: 100vh;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .sidebar ul li {
+            margin: 20px 0;
+        }
+
+        .sidebar ul li a {
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .sidebar ul li a:hover {
+            color: #3498db; /* Accent color */
+        }
+
+        .content {
+            padding: 20px;
+            flex-grow: 1;
+        }
+
+        .user-table {
+            border: 1px solid #e0e0e0;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th, td {
+            border: 1px solid #e0e0e0;
+            padding: 8px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f9f9f9; /* Light background */
+        }
+
+        .add-user-form {
+            margin-top: 20px;
+            border: 1px solid #e0e0e0;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #2c3e50; /* Header/Footer color */
+        }
+
+        input[type="text"], input[type="email"], select {
+            width: calc(100% - 12px);
+            padding: 1rem;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            color: #333;
+            background-color: white;
+            transition: all 0.3s;
+        }
+
+        input[type="text"]:focus, input[type="email"]:focus, select:focus{
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+            outline: none;
+        }
+
+        button {
+            background-color: #3498db; /* Accent color */
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard">
+        <aside class="sidebar">
+            <h2>Dashboard</h2>
+            <ul>
+                <li><a href="#users" onclick="showUsers()">Users</a></li>
+            </ul>
+        </aside>
+        <main class="content">
+            <section id="users" class="user-table">
+                <h2>User List</h2>
+                <table id="userTable">
+                    <thead>
+                        <tr>
+                            <th>Full Name</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        </tbody>
+                </table>
+
+                <div class="add-user-form">
+                    <h3>Add New User</h3>
+                    <div class="form-group">
+                        <label for="fullName">Full Name:</label>
+                        <input type="text" id="fullName">
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email:</label>
+                        <input type="email" id="email">
+                    </div>
+                    <div class="form-group">
+                        <label for="role">Role:</label>
+                        <select id="role">
+                            <option value="admin">Admin</option>
+                            <option value="user">User</option>
+                            <option value="driver">Driver</option>
+                        </select>
+                    </div>
+                    <button onclick="addUser()">Add User</button>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        let users = []; // Array to store user data
+
+        function showUsers() {
+            const tableBody = document.querySelector("#userTable tbody");
+            tableBody.innerHTML = ""; // Clear existing table rows
+
+            users.forEach(user => {
+                const row = tableBody.insertRow();
+                const fullNameCell = row.insertCell(0);
+                const emailCell = row.insertCell(1);
+                const roleCell = row.insertCell(2);
+
+                fullNameCell.textContent = user.fullName;
+                emailCell.textContent = user.email;
+                roleCell.textContent = user.role;
+            });
+        }
+
+        function addUser() {
+            const fullName = document.getElementById("fullName").value;
+            const email = document.getElementById("email").value;
+            const role = document.getElementById("role").value;
+
+            if (fullName && email && role) {
+                users.push({ fullName, email, role });
+                showUsers(); // Refresh the user table
+                // Clear form fields
+                document.getElementById("fullName").value = "";
+                document.getElementById("email").value = "";
+                document.getElementById("role").value = "admin"; // Reset role to default
+            } else {
+                alert("Please fill in all fields.");
+            }
+        }
+
+        // Initialize user table on page load
+        showUsers();
+    </script>
+</body>
+</html>

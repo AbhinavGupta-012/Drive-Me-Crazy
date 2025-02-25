@@ -115,80 +115,57 @@
         <p id="error-message" class="error-message"></p>
     </div>
 
-    <!-- <script>
-        document.getElementById('signup-form').addEventListener('submit', function(event) {
-            event.preventDefault();
-            const name = document.getElementById('name').value;
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const confirmPassword = document.getElementById('confirm-password').value;
-            const errorMessage = document.getElementById('error-message');
-
-            // Validate fields
-            if (!name || !email || !password || !confirmPassword) {
-                errorMessage.textContent = "All fields are required.";
-                return;
-            }
-
-            if (password !== confirmPassword) {
-                errorMessage.textContent = "Passwords do not match.";
-                return;
-            }
-
-            // Simulate successful signup
-            alert("Signup successful!");
-            window.location.href = "homepage.html"; // Redirect to sign-in page
-        });
-    </script> -->
     <script>
-        document.getElementById('signup-form').addEventListener('submit', async function(event) {
-            event.preventDefault(); // Prevent page reload
         
-            const name = document.getElementById('name').value;
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const confirmPassword = document.getElementById('confirm-password').value;
-            const errorMessage = document.getElementById('error-message');
-        
-            // Validate fields
-            if (!name || !email || !password || !confirmPassword) {
-                errorMessage.textContent = "All fields are required.";
-                return;
+    document.getElementById('signup-form').addEventListener('submit', async function(event) {
+        event.preventDefault(); // Prevent page reload
+
+        const name = document.getElementById('name').value;
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirm-password').value;
+        const errorMessage = document.getElementById('error-message');
+
+        // Validate fields
+        if (!name || !email || !password || !confirmPassword) {
+            errorMessage.textContent = "All fields are required.";
+            return;
+        }
+        if (password !== confirmPassword) {
+            errorMessage.textContent = "Passwords do not match.";
+            return;
+        }
+
+        // Data to send to backend
+        const userData = {
+            fullName: name,
+            email: email,
+            password: password
+        };
+
+        try {
+            const response = await fetch("http://localhost:5000/api/auth/signup", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(userData)
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                alert("Signup successful! Redirecting to login...");
+                window.location.href = "signin.html"; // Redirect to login page
+            } else {
+                errorMessage.textContent = data.message || "Signup failed. Try again.";
             }
-            if (password !== confirmPassword) {
-                errorMessage.textContent = "Passwords do not match.";
-                return;
-            }
-        
-            // Data to send to backend
-            const userData = {
-                fullName: name,
-                email: email,
-                password: password
-            };
-        
-            try {
-                const response = await fetch("http://localhost:5000/api/auth/signup", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify(userData)
-                });
-        
-                const data = await response.json();
-        
-                if (response.ok) {
-                    alert("Signup successful! Redirecting to login...");
-                    window.location.href = "homepage.html"; // Redirect to login page
-                } else {
-                    errorMessage.textContent = data.message || "Signup failed. Try again.";
-                }
-            } catch (error) {
-                console.error("Error during signup:", error);
-                errorMessage.textContent = "Error connecting to server.";
-            }
-        });
-        </script>
+        } catch (error) {
+            console.error("Error during signup:", error);
+            errorMessage.textContent = "Error connecting to server.";
+        }
+    });
+</script>
+
 </body>
 </html>

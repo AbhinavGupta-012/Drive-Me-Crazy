@@ -1,0 +1,36 @@
+.nav li{
+    display: inline;
+    margin-left: 35px;
+  }
+  .nav li:hover{
+    border: solid white 1px;
+  }
+  .nav{
+    display: flex;
+    justify-content:flex-end;
+    align-items: center;
+    background-color: #393071;
+    padding: 15px 20px;
+    color: white;
+    height: 50px;
+    font-size: 1.1rem;
+  }
+  .nav button{
+    margin-left: 20px;
+    border-radius: 5px;
+    background-color: black;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 30px;
+    width: 80px;
+    font-size: 1.1rem;
+    border: solid white 1px;
+  }
+
+  .auth-buttons {
+    display: flex; /* Added to keep buttons inline */
+    align-items: center;
+  }
+  
