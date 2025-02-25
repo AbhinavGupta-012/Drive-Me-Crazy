@@ -293,42 +293,67 @@
     </div>
     
     <script>
-        document.addEventListener("DOMContentLoaded", async function () {
-    const driverList = document.getElementById("driverList");
-
-    try {
-        const response = await fetch("http://localhost:5000/api/admin/drivers", {
-            headers: { "Authorization": "Bearer YOUR_ADMIN_TOKEN" }
-        });
-
-        const drivers = await response.json();
-        if (drivers.length > 0) {
-            driverList.innerHTML = "";
-            drivers.forEach(driver => {
-                const li = document.createElement("li");
-                li.classList.add("driver-card");
-                li.innerHTML = `
-                    <div class="driver-info">
-                        <div class="avatar">${driver.name[0]}</div>
-                        <div class="driver-details">
-                            <h3>${driver.name}</h3>
-                            <p>📧 ${driver.email}</p>
-                            <p>📱 ${driver.phone}</p>
-                            <span class="tag">${driver.vehicle}</span>
+        document.addEventListener("DOMContentLoaded", function() {
+            const driverList = document.getElementById("driverList");
+            
+            const pendingDrivers = [
+                { 
+                    name: "John Doe", 
+                    email: "john@example.com", 
+                    vehicle: "Sedan", 
+                    phone: "+1 (555) 123-4567",
+                    joinDate: "Feb 20, 2025"
+                },
+                { 
+                    name: "Jane Smith", 
+                    email: "jane@example.com", 
+                    vehicle: "SUV",
+                    phone: "+1 (555) 987-6543",
+                    joinDate: "Feb 23, 2025"
+                }
+            ];
+            
+            if (pendingDrivers.length > 0) {
+                driverList.innerHTML = "";
+                pendingDrivers.forEach(driver => {
+                    const initials = driver.name.split(' ').map(n => n[0]).join('');
+                    const li = document.createElement("li");
+                    li.classList.add("driver-card");
+                    li.innerHTML = `
+                        <div class="driver-info">
+                            <div class="avatar">${initials}</div>
+                            <div class="driver-details">
+                                <h3>${driver.name}</h3>
+                                <p>📧 ${driver.email}</p>
+                                <p>📱 ${driver.phone}</p>
+                                <p>📅 Applied: ${driver.joinDate}</p>
+                                <span class="tag">${driver.vehicle}</span>
+                            </div>
                         </div>
-                    </div>
-                    <div class="actions">
-                        <button class="btn approve">✓ Approve</button>
-                        <button class="btn reject">✕ Reject</button>
-                    </div>`;
-                driverList.appendChild(li);
+                        <div class="actions">
+                            <button class="btn approve">✓ Approve</button>
+                            <button class="btn reject">✕ Reject</button>
+                        </div>`;
+                    driverList.appendChild(li);
+                });
+            }
+            
+            // Search functionality
+            const searchInput = document.querySelector('.search-bar input');
+            searchInput.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                const driverCards = document.querySelectorAll('.driver-card');
+                
+                driverCards.forEach(card => {
+                    const driverText = card.textContent.toLowerCase();
+                    if (driverText.includes(searchTerm)) {
+                        card.style.display = 'flex';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
             });
-        }
-    } catch (error) {
-        console.error("Error fetching drivers:", error);
-    }
-});
-
+        });
     </script>
 </body>
 </html>
